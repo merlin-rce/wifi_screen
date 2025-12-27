@@ -18,35 +18,46 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void setup() {
+  // ---- Serial (debug) ----
   Serial.begin(115200);
-  while (!Serial)
-    ;
-   Wire.begin(I2C_SDA, I2C_SCK);
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  delay(200);  // petit délai pour laisser le temps au port série de s'ouvrir
+  Serial.println();
+  Serial.println("Booting...");
+
+  // ---- I2C ----
+  Wire.begin(I2C_SDA, I2C_SCK);
+  Serial.printf("I2C started (SDA=%d, SCL=%d)\n", I2C_SDA, I2C_SCK);
+
+  // ---- OLED ----
+  Serial.printf("Initializing OLED at I2C address 0x%02X...\n", SCREEN_ADDRESS);
+
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("Display1 SSD1306 allocation failed"));
-    for (;;)
-      ;  // Don't proceed, loop forever
+    Serial.println("ERROR: SSD1306 init failed (check wiring / address / power).");
+
+    // Option 1: bloquer (classique quand l'écran est indispensable)
+    while (true) {
+      delay(1000);
+    }
+
+    // Option 2 (alternative): ne pas bloquer
+    // return;
   }
 
-// Show splash screen
-  display.display();
-  delay(2000); // Pause for 2 seconds
+  Serial.println("OLED init OK");
 
-  // Display settings
+  // ---- Display config ----
   display.clearDisplay();
-  display.setTextSize(2);             // Normal 1:1 pixel scale
-  display.setTextColor(WHITE);        // Draw white text
-  display.setCursor(0,0);             // Start at top-left corner
-  display.setRotation(ROTATION);      // Set screen rotation
+  display.setRotation(ROTATION);
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(2);
+  display.setCursor(0, 0);
 
-
-  display.print(" nigga ");
-
+  // ---- First message ----
+  display.println("Hello!");
   display.display();
 
+  Serial.println("Setup done.");
 }
-
 
 void loop() {
 }
