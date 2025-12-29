@@ -1,4 +1,4 @@
-# ESP32 SSD1306 Menu UI
+# wifi_screen ESP32 SSD1306 Menu UI
 
 Simple menu system for an **SSD1306 OLED display** using an **ESP32** and physical buttons.
 
